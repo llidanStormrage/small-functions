@@ -2,7 +2,7 @@
   <div>
     <div class="top">
       <div
-        :class="name === i.label ? 'box boxShan' : 'box'"
+        :class="name == i.label ? 'box boxShan' : 'box'"
         v-for="i in list"
         :key="`${i}name`"
       >
@@ -35,32 +35,73 @@ let status = ref("start");
 let persint = ref("");
 //抽奖结果
 let giftRes = ref();
-const start = () => {
+const start = async () => {
   if (status.value === "start") {
     let startNum = 0;
     timer = setInterval(() => {
-      if (startNum === 10) {
+      if (startNum === 9) {
         startNum = 0;
       }
+    //   console.log(startNum)
       name.value = list.value[startNum]?.label;
+    //   console.log('name:', name.value)
+
       persint.value = list.value[startNum]?.value;
+    //   console.log(name.value)
+      
+
       startNum++;
     }, 100);
-    setTimeout(() => {
-      console.log(name.value, "name.value");
-      giftRes = { value: "奖品8", label: "8" };
-      //返回抽奖结果
-      // name.value = list.value[startNum]?.label;
-      // alert(`${list.value[startNum]?.value}`)
-      clearInterval(timer);
-    }, 1200);
+    // setTimeout(() => {
+    //   console.log(name.value, "name.value");
+    //   giftRes = { value: "奖品8", label: "8" };
+    //   //返回抽奖结果
+    //   // name.value = list.value[startNum]?.label;
+    //   // alert(`${list.value[startNum]?.value}`)
+    //   clearInterval(timer);
+    // }, 1200);
   }
-};
-//拿到结果之后得处理
-const handle = ()=>{
-  //拿到当前得选项
-  //匹配还有几个
+  const reslut = await test()
+  giftRes.value = reslut.label
+  console.log(name.value)
+  console.log(reslut.label)
+  clearInterval(timer)
+
+  handle(100, name.value < reslut.label)
   
+};
+
+let timers = 0
+//拿到结果之后得处理
+const handle = (delay = 100, flag)=>{
+    if (name.value == giftRes.value) return
+
+    
+    
+    //拿到当前得选项
+    //匹配还有几个
+    timers = setTimeout(() => {
+        if (!flag && name.value === 9) {
+            name.value = 1
+        } else {
+            name.value = Number(name.value) + 1
+        }
+
+        persint.value = list.value[name.value -1 ]?.value;
+        clearTimeout(timers)
+        // dealy
+        handle(delay + 50, flag)
+    }, delay);
+  
+}
+
+// test
+const test = () => {
+    return new Promise((resolve, rejetcted) => {
+        setTimeout(() => {
+            resolve( {value: "奖品8", label: "2"} )
+        }, 2600);
+    })
 }
 </script>
 
