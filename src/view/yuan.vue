@@ -87,7 +87,7 @@ const handleDeg = (cDeg) => {
     const restDeg = (deg % 360)
     console.log('restDeg:', restDeg)
     // 转了的角度 和 需要转的角度相比
-    circle.value.style.transition = `all linear 3s`
+    circle.value.style.transition = `all ease-in-out 2s`
     if (restDeg - cDeg > 0) {
         console.log('cDeg:', cDeg)
         circle.value.style.transform = `rotate(${360 - restDeg + cDeg + deg}deg)`
@@ -135,7 +135,7 @@ onMounted(() => {
     position: relative;
     border: 2px solid #000;
     box-sizing: border-box;
-    transition: all linear 1s;
+    transition: all linear 2s;
     background-image: url(../assets/images/c_bg_2.webp);
     background-size: 100% 100%;
     background-position: center center;
