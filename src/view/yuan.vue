@@ -8,6 +8,7 @@
             
         </div>
         <div class="zhizhen" @click="handleBegin"></div>
+        <button @click="handleReset">重 置</button>
  
     </div>
 </template>
@@ -16,6 +17,7 @@ import { ref, onMounted } from 'vue';
 let circle = ref(null)
 
 let flag = false
+let needRest = false
 const levelMap = [
     {
         level: 1,
@@ -52,13 +54,30 @@ let timer = 0
 let time = 100 // ms
 let deg = 0
 
+
+// handleReset
+const handleReset = () => {
+    if (flag) return
+    deg = 0
+    cNum = 0
+    time = 100
+    circle.value.style.transform = `rotate(0deg)`
+    circle.value.style = ''
+    needRest = false
+
+}
+
 // handleBegin
 const handleBegin = () => {
-    if (flag) return
+    if (flag || needRest) return
+    
     flag = true
+    needRest = true
     console.log('kaishi lo  ===========================')
     cNum++
     deg = 0.36 * time
+
+    circle.value.style.transition = `all linear 0.1s`;
     circle.value.style.transform = `rotate(${deg}deg)`
     
     handleTime()
@@ -68,7 +87,7 @@ const handleBegin = () => {
         deg = 0.36 * time
         circle.value.style.transform = `rotate(${deg}deg)`
 
-        console.log(123123)
+        console.log(deg)
     }, 100);
 
 }
@@ -77,30 +96,39 @@ const handleBegin = () => {
 const test = () => {
     return new Promise((resolve, rejected) => {
         setTimeout(() => {
-            resolve(4)
-        }, 2300)
+            resolve(2)
+        }, 3000)
     })
 }
 // TODO：感觉需要用max和min 比较妥当一些
 // handledeg
 const handleDeg = (cDeg) => {
     const restDeg = (deg % 360)
+    let restTime = 0
     console.log('restDeg:', restDeg)
+    console.log('Deg:', deg)
     // 转了的角度 和 需要转的角度相比
-    circle.value.style.transition = `all ease-in-out 2s`
+    
     if (restDeg - cDeg > 0) {
         console.log('cDeg:', cDeg)
-        circle.value.style.transform = `rotate(${360 - restDeg + cDeg + deg}deg)`
+        restTime = ((360 - restDeg + cDeg) / 360).toFixed(1)
+        console.log(restTime)
+        console.log('ddd:', (360 - restDeg + cDeg))
+        // circle.value.style.transition = `all ease-out ${restTime}s`
+        // circle.value.style.transform = `rotate(${360 - restDeg + cDeg + deg}deg)`
     } else if (restDeg - cDeg < 0){
+        restTime = ((360 - restDeg + cDeg) / 360).toFixed(1)
+        console.log('ddd:', (cDeg - restDeg + deg))
+        console.log(restTime)
+        circle.value.style.transition = `all cubic-bezier(0, 0, 0.5, 0.96) ${restTime}s`
         circle.value.style.transform = `rotate(${cDeg - restDeg + deg}deg)`
+        // circle.value.style.transform = `rotate(${1000}deg)`
     }
 }
 // handleTime
 const handleTime = async () => {
     try {
         const reslut = await test()
-        console.log(reslut)
-        console.log(levelMap)
         const item = levelMap.find((item) => {
             return item.level === reslut
         })
@@ -110,6 +138,7 @@ const handleTime = async () => {
         console.log(deg)
         console.log(time)
         flag = false
+        
     } catch (error) {
         flag = false
     }
@@ -135,7 +164,8 @@ onMounted(() => {
     position: relative;
     border: 2px solid #000;
     box-sizing: border-box;
-    transition: all linear 2s;
+    /* transform: rotate(360deg);
+    transition: all linear 2s; */
     background-image: url(../assets/images/c_bg_2.webp);
     background-size: 100% 100%;
     background-position: center center;
