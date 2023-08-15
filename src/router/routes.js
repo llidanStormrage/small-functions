@@ -5,6 +5,7 @@ const routes = [
   { path: "/yuan", component: () => import("../../src/view/yuan.vue") },
   { path: "/everyday", component: () => import("../../src/view/everyday.vue") },
   { path: "/practice", component: () => import("../../src/view/everyDay/day1.vue") },
+  { path: "/dianti", component: () => import("../../src/view/everyDay/day3.vue") },
 ];
 
 export default routes;
